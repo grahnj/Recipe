@@ -1,0 +1,7 @@
+()Import Entity logic
+()Import DB
+()Build UI logic
+()Bind UI logic to Entity logic
+()Build DB binding logic
+()Test
+()Finalize documentation
