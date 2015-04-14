@@ -1,5 +1,5 @@
 //This is the ingredient object/**
-
+function Recipe() {
 var VolumeStandard = {
     TSP : 1,
     TBSP : 3,
@@ -286,3 +286,6 @@ function Standard(){
         }
     };
 }
+}
+
+module.exports = Recipe;
