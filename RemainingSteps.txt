@@ -5,3 +5,13 @@
 ()Build DB binding logic
 ()Test
 ()Finalize documentation
+
+Notes
+
+JG 4.14.2015.19.19.00.000 - 
+  We may need to consider how a user will delete an object from their ingredient list.
+  I thought of this while brainstorming UPDATE queries and how we should handle submitting ingredients.
+
+  If we do offer them the ability to delete, we should handle update and delete tasks per ingredient
+  --I think the smoothest way to implement this will be one at a time, but refetching the data could be tricky.
+  --Perhaps we can just rerun our code that populates the list everytime add an ingredient?
