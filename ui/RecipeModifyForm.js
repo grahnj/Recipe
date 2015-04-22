@@ -1,4 +1,4 @@
-function RecipeModifyForm(/*Boolean*/editMode)	{
+function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 	var createIngredient = require('Create Ingredient');
 	 
 	var self = Ti.UI.createWindow({
