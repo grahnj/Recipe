@@ -1,10 +1,17 @@
-()Import Entity logic
-()Import DB
-()Build UI logic
-()Bind UI logic to Entity logic
-()Build DB binding logic
+(X)Import Entity logic
+(X)Import DB
+()Build UI logic -- I believe Will has finished this? 
+(IP)Bind UI logic to Entity logic
+    --()PlaySteps form (Chris)
+    --(T)MyRecipes form (Justin)
+    --()ModifyRecipe form (Will)
+(T)Build DB binding logic -- Justin completed development 4/21/2015 -- Ready for testing
 ()Test
 ()Finalize documentation
+
+X - Complete
+T - Needs Testing and verification that everything works
+IP - In Progress
 
 Notes
 
