@@ -228,8 +228,8 @@ var something = new Ingredient("justin", meas);
 
 console.log(something.measurement.quantity + " " + something.measurement.unit);
 
-function Recipe(name, yield, isStandard){
-
+function Recipe(id, name, yield, isStandard){
+    this.id = id;
     this.ingredients = [];
     this.name = name;
     this.perPerson = yield;
