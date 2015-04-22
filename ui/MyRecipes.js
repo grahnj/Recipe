@@ -1,4 +1,9 @@
+
 function MyRecipes(){
+	
+	var db = require("db");
+	var Recipe = require("Ingredient");
+	
 	var self = Ti.UI.createWindow({
 		backgroundColor: '#9999AA',
 		layout: 'vertical'
@@ -33,13 +38,62 @@ function MyRecipes(){
 		}
 	});
 	
-	
+	//Table to hold our recipe information
 	var table = Ti.UI.createTableView({
 		width:'98%',
 		height: '80%',
 		backgroundColor: '#CFCFCF',
 		separatorColor: '555588'
 	});
+	
+	var rows = recipe.getRecipes();
+	var recipes = [];
+	
+	if (rows != null){
+		while (rows.isValidRow()){
+			var recipe = new Recipe.Recipe(
+				rows.fieldByName("RECIPE_ID"),
+				rows.fieldByName("NAME"),
+				rows.fieldByName("YIELD"),
+				rows.fieldByName("IS_STANDARD"));
+				
+			recipes.push(recipe);
+		}
+		
+		for (var i = 0; i < rows.length; i++){
+			var row = Ti.UI.createTableViewRow({
+				touchEnabled: true,
+			});
+			
+			row.data = recipes[i].id;
+			
+			row.addEventListener('click', function(e){
+				var id = e.rowData.data;
+				
+				var RecipeModifyForm = require('ui/RecipeModifyForm')(id);
+		
+				new RecipeModifyForm().open();
+			});
+			
+			var rowContent = Ti.UI.createView({
+				backgroundColor: '#cccccc',
+				width: Ti.UI.FILL,
+				height: '100%'
+			});
+			
+			var label = Ti.UI.createLabel({
+				color: 'black',
+				text: recipes[i].name
+			});
+			
+			rowContent.add(label);
+			row.add(rowContent);
+			table.add(row);
+			
+			rows.close();
+			db.close();
+		}
+	}
 	
 	//Buttons
 	var btnEdit = Ti.UI.createButton({
@@ -61,7 +115,7 @@ function MyRecipes(){
 	btnAdd.addEventListener('click', function(e){
 		var RecipeModifyForm = require('ui/RecipeModifyForm');
 		
-		new RecipeModifyForm(true).open(); //Opens RecipeModifyForm.js with edit options
+		new RecipeModifyForm().open();
 	});
 	
 	//Build
