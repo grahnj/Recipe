@@ -61,7 +61,7 @@ function MyRecipes(){
 	btnAdd.addEventListener('click', function(e){
 		var RecipeModifyForm = require('ui/RecipeModifyForm');
 		
-		new RecipeModifyForm().open();
+		new RecipeModifyForm(true).open(); //Opens RecipeModifyForm.js with edit options
 	});
 	
 	//Build
