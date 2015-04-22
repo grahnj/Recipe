@@ -70,9 +70,9 @@ function MyRecipes(){
 			row.addEventListener('click', function(e){
 				var recipeInstance = e.rowData.data;
 				
-				var RecipeModifyForm = require('ui/RecipeModifyForm')(recipeInstance);
+				var RecipeModifyForm = require('ui/RecipeModifyForm')();
 				//Does new affect the parameter?
-				new RecipeModifyForm().open();
+				new RecipeModifyForm(false, recipeInstance).open();
 			});
 			
 			var rowContent = Ti.UI.createView({
@@ -115,7 +115,7 @@ function MyRecipes(){
 	btnAdd.addEventListener('click', function(e){
 		var RecipeModifyForm = require('ui/RecipeModifyForm');
 		
-		new RecipeModifyForm().open();
+		new RecipeModifyForm(true, null).open();
 	});
 	
 	//Build
