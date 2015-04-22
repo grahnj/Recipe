@@ -1,4 +1,5 @@
 function RecipeModifyForm()	{
+	var editMode = true; //TODO change based on how user enters page
 	var createIngredient = require('Create Ingredient');
 	 
 	var self = Ti.UI.createWindow({
@@ -32,6 +33,7 @@ function RecipeModifyForm()	{
 		top: '118dp',
 		height: '20dp',
 		width: Ti.UI.FILL,
+		visible: editMode
 		//layout: 'horizontal',	
 	});
 	
@@ -39,6 +41,7 @@ function RecipeModifyForm()	{
 		top: '140dp',
 		height: '40',
 		width: Ti.UI.FILL,
+		visible: editMode
 		//Layout: 'horizontal',
 	});
 	
@@ -48,12 +51,13 @@ function RecipeModifyForm()	{
 		width: Ti.UI.Fill,
 		height: '40',
 		backgroundColor: '#557777',
-		layout: 'horizontal'
+		layout: 'horizontal',
 	});
 	
 	var chkGluten = Ti.UI.createSwitch({
 		style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Gluten Free |',
+		enabled: editMode
 		//color: '#000000'
 	});
 	checklistView.add(chkGluten);
@@ -61,6 +65,7 @@ function RecipeModifyForm()	{
 	var chkPeanut = Ti.UI.createSwitch({
 		style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Peanut Free |',
+		enabled: editMode
 		//color: '#000000'
 	});
 	checklistView.add(chkPeanut);
@@ -68,6 +73,7 @@ function RecipeModifyForm()	{
 	var chkLactose = Ti.UI.createSwitch({
 		style: Ti.UI.Android.SWITCH_STYLE_CHECKBOX,
 		title: 'Lactose Free |',
+		enabled: editMode
 		//color: '#000000'
 	});
 	checklistView.add(chkLactose);
@@ -91,7 +97,8 @@ function RecipeModifyForm()	{
 		height: '98%',
 		width: '70%',
 		color: '#000000',
-		backgroundColor: '#FFFFFF'
+		backgroundColor: '#FFFFFF',
+		editable: editMode
 	});
 	
 	var measurementSwitch = Ti.UI.createSwitch({
@@ -111,7 +118,8 @@ function RecipeModifyForm()	{
 		width: '10%',
 		height: Ti.UI.FILL,
 		backgroundColor: '#FFFFFF',
-		borderColor: '#9999AA'
+		borderColor: '#9999AA',
+		keyboardType: Ti.UI.KEYBOARD_NUMBER_PAD,
 	});
 	
 	var txtIngredient = Ti.UI.createTextField({
@@ -127,6 +135,7 @@ function RecipeModifyForm()	{
 		width: '10%',
 		height: Ti.UI.FILL,
 		backgroundColor: '#FFFFFF',
+		keyboardType: Ti.UI.KEYBOARD_NUMBER_PAD,
 	});
 	
 	var unitSwitch = Ti.UI.createSwitch({
