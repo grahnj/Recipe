@@ -1,5 +1,4 @@
-function RecipeModifyForm()	{
-	var editMode = true; //TODO change based on how user enters page
+function RecipeModifyForm(/*Boolean*/editMode)	{
 	var createIngredient = require('Create Ingredient');
 	 
 	var self = Ti.UI.createWindow({
