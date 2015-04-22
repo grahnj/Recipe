@@ -65,13 +65,13 @@ function MyRecipes(){
 				touchEnabled: true,
 			});
 			
-			row.data = recipes[i].id;
+			row.data = recipes[i];
 			
 			row.addEventListener('click', function(e){
-				var id = e.rowData.data;
+				var recipeInstance = e.rowData.data;
 				
-				var RecipeModifyForm = require('ui/RecipeModifyForm')(id);
-		
+				var RecipeModifyForm = require('ui/RecipeModifyForm')(recipeInstance);
+				//Does new affect the parameter?
 				new RecipeModifyForm().open();
 			});
 			
