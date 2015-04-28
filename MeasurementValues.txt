@@ -1,0 +1,24 @@
+Here are the measurement values starting at the root
+
+0 - Volume
+  TSP : 1,
+  TBSP : 3,
+  OZ : 6,
+  CUP : 48,
+  PT : 96,
+  QT : 192,
+  GAL : 768
+    
+  ML : 1,
+  L : 1000
+  
+1 - Solids
+  OZ : 1,
+  LB : 16
+  
+  G : 1,
+  KG : 1000
+  
+To insert a new ingredient, for the parameters we would want to pass it like this (5, Carrot, 4, 0, 48)
+  -This is a carrot ingredient being added to recipe 5, and we are adding 4 cups
+  -The recipe determines whether the ingredient is standard or metric
