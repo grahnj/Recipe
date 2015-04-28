@@ -115,7 +115,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.TBSP;
                     }
                     else return;
-                    break;
                 case VolumeStandard.TBSP:
                     ratio = VolumeStandard.OZ / VolumeStandard.TBSP;
                     if (this.quantity > ratio) {
@@ -123,7 +122,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.OZ;
                     }
                     else return;
-                    break;
                 case VolumeStandard.OZ:
                     ratio = VolumeStandard.CUP / VolumeStandard.OZ;
                     if (this.quantity > ratio) {
@@ -131,7 +129,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.CUP;
                     }
                     else return;
-                    break;
                 case VolumeStandard.CUP:
                     ratio = VolumeStandard.PT / VolumeStandard.CUP;
                     if (this.quantity > ratio) {
@@ -139,7 +136,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.PT;
                     }
                     else return;
-                    break;
                 case VolumeStandard.PT:
                     ratio = VolumeStandard.QT / VolumeStandard.PT;
                     if (this.quantity > ratio) {
@@ -147,7 +143,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.QT;
                     }
                     else return;
-                    break;
                 case VolumeStandard.QT:
                     ratio = VolumeStandard.GAL / VolumeStandard.QT;
                     if (this.quantity > ratio) {
@@ -155,7 +150,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = VolumeStandard.GAL;
                     }
                     else return;
-                    break;
                 case VolumeStandard.GAL:
                     return; //We don't need to upscale this any further
                 default:
@@ -171,7 +165,6 @@ function Measurement(quantity, unit, measurementType, isStandard){
                         this.unit = WeightStandard.GAL;
                     }
                     else return;
-                    break;
                 case WeightStandard.LB:
                     return;
                 default:
@@ -223,10 +216,10 @@ function Ingredient(name, Measurement){
 
 //TODO test
 //This should yield 1 pt
-var meas = new Measurement(16, VolumeStandard.OZ, true, true);
-var something = new Ingredient("justin", meas);
+//var meas = new Measurement(16, VolumeStandard.OZ, true, true);
+//var something = new Ingredient("justin", meas);
 
-console.log(something.measurement.quantity + " " + something.measurement.unit);
+//console.log(something.measurement.quantity + " " + something.measurement.unit);
 
 function Recipe(id, name, yield, isStandard){
     this.id = id;
