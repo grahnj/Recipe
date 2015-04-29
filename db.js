@@ -75,5 +75,5 @@ function db(){
 			
 			"WHERE RECIPE_STEP.RECIPE_ID = ?", recipeID);	
 	}
-
+}
 module.exports = db;
