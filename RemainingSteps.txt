@@ -3,8 +3,23 @@
 ()Build UI logic -- I believe Will has finished this? 
 (IP)Bind UI logic to Entity logic
     --()PlaySteps form (Chris)
-    --(T)MyRecipes form (Justin)
+        --()Form can take two paths (Read, Write)
+        --()Write Path
+            --()Form creates step numbers in the database on insert
+            --()Form Renames Step # based off of # of rows currently in steps
+        --()Read Path
+            --()Form queries for steps
+            --()Form pulls steps[step#] into the field
+    --(X)MyRecipes form (Justin)
     --()ModifyRecipe form (Will)
+        --()Form can take two paths (Read, Write)
+        --()Write Path
+            --()Form is empty and new data is inserted into db
+            --()Add steps tells the step form (false, step#, recipeObject)
+        --()Read Path
+            --()Populate data
+            --()Ensure that data scales according to servings (Justin if logic is broken)
+            --()Play steps tells the step form (true, 0, recipeObject)
 (T)Build DB binding logic -- Justin completed development 4/21/2015 -- Ready for testing
 ()Test
 ()Finalize documentation
