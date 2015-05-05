@@ -8,7 +8,11 @@ function database(){
 	db.execute("CREATE TABLE IF NOT EXISTS STEP (ID INTEGER (10) PRIMARY KEY UNIQUE, RECIPE_ID INTEGER (10) REFERENCES RECIPE (RECIPE_ID) NOT NULL, STEP_NUMBER INTEGER (2) NOT NULL, DETAILS STRING (400) NOT NULL);");
 	db.execute("CREATE TABLE IF NOT EXISTS FILTER (FILTER_ID INTEGER (2) PRIMARY KEY UNIQUE, FILTER_NAME VARCHAR (50) NOT NULL UNIQUE);");
 	
+	try{
 	db.execute("INSERT INTO FILTER (FILTER_NAME) VALUES ('Gluten Free'), ('Dairy Free'), ('Vegetarian');");
+	} catch (e){
+		console.log("The filters have already been inserted into the tables");
+	}
 	db.execute("INSERT INTO RECIPE (NAME, YIELD, IS_STANDARD) VALUES ('Apple Pie', 4, 1)");
 	
 	var test = db.execute("SELECT * FROM RECIPE");
