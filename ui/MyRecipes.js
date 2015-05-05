@@ -1,8 +1,7 @@
-
 function MyRecipes(){
 	
 	var db = require("db");
-	var Recipe = require("Ingredient");
+	var entities = require("FoodEntities");
 	
 	var self = Ti.UI.createWindow({
 		backgroundColor: '#9999AA',
@@ -38,62 +37,68 @@ function MyRecipes(){
 		}
 	});
 	
+	//Load in the recipes 
+	function getRecipes(){
+		var recipes = db.getRecipes();
+		console.log("We have obtained the recipes");
+		var recipeObjects = [];
+		
+		if (recipes.isValidRow()){
+			var id = recipes.fieldByName('RECIPE_ID');
+			var name = recipes.fieldByName('NAME');
+			var yieldAmt = recipes.fieldByName('YIELD');
+			var isStandard = recipes.fieldByName('IS_STANDARD');
+			console.log("We have added a recipe");
+			recipeObjects.push(new entities.Recipe(id, name, yieldAmt, isStandard));
+		}
+		console.log("We have pushed the recipes");
+		return recipeObjects;
+	};
+	
+	var ourRecipes = getRecipes();
+	
+	var ourRecipeRows = [];
+	for (var i = 0; i < ourRecipes.length; i++){
+		ourRecipeRows.push({
+			title: ourRecipes[i].name,
+			color: 'black',
+			myid: ourRecipes[i].id,
+			data: ourRecipes[i]
+		});
+		
+		
+		// var row = Ti.UI.createTableViewRow();
+	// 	
+		// var rowData = Ti.UI.createView({
+			// width: Ti.UI.FILL,
+			// backgroundColor: '#cc66cc',
+			// myid: ourRecipes[i].id
+		// });
+	// 	
+		// rowData.add(Ti.UI.createLabel({
+			// text: ourRecipes[i].name,
+		// }));
+	// 	
+		// ourRecipeRows.push(rowData);
+	}
+	
 	//Table to hold our recipe information
 	var table = Ti.UI.createTableView({
 		width:'98%',
 		height: '80%',
+		color: '#000000',
 		backgroundColor: '#CFCFCF',
-		separatorColor: '555588'
+		separatorColor: '555588',
+		allowsSelection: true,
+		data: ourRecipeRows
 	});
 	
-	var rows = recipe.getRecipes();
-	var recipes = [];
-	
-	if (rows != null){
-		while (rows.isValidRow()){
-			var recipe = new Recipe.Recipe(
-				rows.fieldByName("RECIPE_ID"),
-				rows.fieldByName("NAME"),
-				rows.fieldByName("YIELD"),
-				rows.fieldByName("IS_STANDARD"));
-				
-			recipes.push(recipe);
-		}
+		table.addEventListener('click', function(e){
+			//FUTURE: If the form isn't opening correctly, it's happening because of this rowData.data
+			var RecipeModifyForm = require('ui/RecipeModifyForm');
 		
-		for (var i = 0; i < rows.length; i++){
-			var row = Ti.UI.createTableViewRow({
-				touchEnabled: true,
-			});
-			
-			row.data = recipes[i];
-			
-			row.addEventListener('click', function(e){
-				var recipeInstance = e.rowData.data;
-				
-				var RecipeModifyForm = require('ui/RecipeModifyForm')();
-				//Does new affect the parameter?
-				new RecipeModifyForm(false, recipeInstance).open();
-			});
-			
-			var rowContent = Ti.UI.createView({
-				backgroundColor: '#cccccc',
-				width: Ti.UI.FILL,
-				height: '100%'
-			});
-			
-			var label = Ti.UI.createLabel({
-				color: 'black',
-				text: recipes[i].name
-			});
-			
-			rowContent.add(label);
-			row.add(rowContent);
-			table.add(row);
-			
-			rows.close();
-			db.close();
-		}
-	}
+			new RecipeModifyForm(false, e.rowData.data).open();
+		});
 	
 	//Buttons
 	var btnEdit = Ti.UI.createButton({
@@ -101,7 +106,6 @@ function MyRecipes(){
 		width: '50%',
 		height: Ti.UI.FILL
 	});
-	
 	// btnEdit.addEventListener('click', function(e){
 	// //RecipeModifyView with info
 	// });
