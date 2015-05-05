@@ -71,6 +71,10 @@ function database(){
 	database.prototype.close = function(){
 		db.close();
 	};
+	
+	database.prototype.execute = function(executionString){
+		db.execute(executionString);
+	};
 		
 }
 var database = new database();
