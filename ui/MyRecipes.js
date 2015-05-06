@@ -44,7 +44,7 @@ function MyRecipes(){
 		var recipeObjects = [];
 		
 		if (recipes.isValidRow()){
-			var id = recipes.fieldByName('ROWID');
+			var id = recipes.fieldByName('rowid');
 			var name = recipes.fieldByName('NAME');
 			var yieldAmt = recipes.fieldByName('YIELD');
 			var isStandard = recipes.fieldByName('IS_STANDARD');
