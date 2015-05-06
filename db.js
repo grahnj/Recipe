@@ -55,10 +55,7 @@ function database(){
 			
 			"FROM STEP " +
 			
-			"INNER JOIN RECIPE_STEP " +
-			"ON RECIPE_STEP.STEP_ID=STEP.ID " +
-			
-			"WHERE RECIPE_STEP.RECIPE_ID = ?", recipeID);	
+			"WHERE RECIPE_ID = ?", recipeID);	
 	};
 	
 	database.prototype.addIngredient = function(recipeID, name, amount, MeasureType){
