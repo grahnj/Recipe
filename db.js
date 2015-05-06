@@ -25,8 +25,8 @@ function database(){
 	database.prototype.getIngredients = function(recipeID){
 		return db.execute("" +
 			"SELECT " +
-
-			"INGREDIENT_ID, " +
+			
+			"rowid, " +
 			"NAME, " +
 			"AMOUNT, " +
 			"MEASUREMENT_TYPE " +
@@ -38,13 +38,10 @@ function database(){
 	database.prototype.getFilters = function(recipeID){
 		return db.execute("SELECT " +
 
-			"FILTER_ID, " +
+			"rowid, " +
 			"FILTER_NAME " +
 			
 			"FROM FILTER " +
-			
-			"INNER JOIN RECIPE_FILTER " +
-			"ON RECIPE_FILTER.FILTER_ID=FILTER.FILTER_ID " +
 			
 			"WHERE RECIPE_FILTER.RECIPE_ID = ?", recipeID);
 	};
@@ -52,7 +49,7 @@ function database(){
 	database.prototype.getSteps = function(recipeID){
 		return db.execute("SELECT " +
 
-			"ID, " +
+			"rowid, " +
 			"STEP_NUMBER " +
 			"DETAILS " +
 			
