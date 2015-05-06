@@ -48,9 +48,6 @@ function database(){
 	
 	database.prototype.getSteps = function(recipeID){
 		return db.execute("SELECT " +
-
-			"rowid, " +
-			"STEP_NUMBER " +
 			"DETAILS " +
 			
 			"FROM STEP " +
