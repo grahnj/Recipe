@@ -43,13 +43,15 @@ function MyRecipes(){
 		console.log("We have obtained the recipes");
 		var recipeObjects = [];
 		
-		if (recipes.isValidRow()){
+		while (recipes.isValidRow()){
 			var id = recipes.fieldByName('rowid');
 			var name = recipes.fieldByName('NAME');
 			var yieldAmt = recipes.fieldByName('YIELD');
 			var isStandard = recipes.fieldByName('IS_STANDARD');
 			console.log("We have added a recipe");
 			recipeObjects.push(new entities.Recipe(id, name, yieldAmt, isStandard));
+			
+			recipes.next();
 		}
 		console.log("We have pushed the recipes");
 		return recipeObjects;
