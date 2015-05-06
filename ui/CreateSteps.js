@@ -2,27 +2,41 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 	var recipe = Recipe;
 	var readWrite = readWrite;
 	var ui = Ti.UI;
-	var num = stepNum;
+	var num = Number(stepNum);
 	var steps = [];
+	
+	if (details != null)
+		steps = details;
+		
 	var db = require("db");
 	var recipe = require("Ingredient");
-	var detail = " ";
+	var detail = "";
 	var moreSteps = true;
+	var REMOVE_ME = 1;
 	
-	if (num+1 == steps.length) {
-		moreSteps = false;
-	}
-	
-	if(readWrite == false) {
-		if(details == null) {
-			var rows = db.getSteps();
-			while(rows.isValidRow()) {
-				steps.push(rows.fieldByName("DETAILS"));
-				rows.next();
-			}
+	(function(){
+		if (num + 1 == steps.length) {
+			moreSteps = false;
 		}
-		detail = steps[num];
-	}
+		console.log(num);
+		if(readWrite == false) {
+			if(details == null) {
+				var rows = db.getSteps(REMOVE_ME);
+				while(rows.isValidRow()) {
+					var step = {
+						rowid: rows.fieldByName("rowid"),
+						step: rows.fieldByName("STEP_NUMBER"),
+						details: rows.fieldByName("DETAILS"),
+					};
+					console.log("Step: " + step.rowid + " " + step.step + " " + step.details);
+					steps.push(step.details);
+					rows.next();
+				}
+			}
+			detail = steps[num];
+		}
+	})();
+	
 	
 	//Create the window
 	var window = ui.createWindow({
@@ -55,6 +69,9 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 		});
 		
 		mainView.add(headerLabel);
+		var startNum = num + 1;
+		var stepNumberText = "Step #" + startNum;
+		console.log(num);
 		//Create a panel -- StepsView
 		var stepsView = ui.createView({
 			top: 0,
@@ -66,7 +83,7 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 			//Create a Label -- Step #
 			var headerLabel = ui.createLabel({
 				color: "#000000",
-				text: "Step #" + num + 1, //TODO maybe change to show id of current step
+				text: stepNumberText, //TODO maybe change to show id of current step
 				height: ui.SIZE,
 				textAlign: "center",
 				top: "5%",
@@ -84,7 +101,7 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 			  borderColor: '#000000',
 			  borderRadius: 5,
 			  color: '#000000',
-			  editable: readWrite;
+			  editable: readWrite,
 			  font: {fontSize:20, fontWeight:'bold'},
 			  //keyboardType: Ti.UI.KEYBOARD_NUMBER_PAD,
 			  returnKeyType: Ti.UI.RETURNKEY_GO,
@@ -119,13 +136,15 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 				nextButton.addEventListener('click', function(e) {
 					var CreateSteps = require('ui/CreateSteps');
 					if(readWrite) {
-						db.setStep(recipe.id, num+1, detail)
-						new CreateSteps(true, recipe, stepNum+1, null).open();
+						console.log(Recipe.id);
+						//TODO This still isn't getting the proper value
+						db.setStep(REMOVE_ME, num+1, stepsArea.value);
+						new CreateSteps(true, recipe, ++num, null).open();
 					
 					}
 					else {
 						if(moreSteps) {
-						new CreateSteps(false, recipe, num+1, steps).open();
+						new CreateSteps(false, recipe, ++num, steps).open();
 						}
 					}
 				});
@@ -137,7 +156,13 @@ function CreateSteps(readWrite, Recipe, stepNum, details) {
 			   top: 5,
 			   width: ui.SIZE,
 			});
-			
+				finishButton.addEventListener('click', function(e) {
+					if (readWrite)
+						db.setStep(REMOVE_ME, num+1, detail);
+						
+					var Window = require('ui/MyRecipes');
+					new Window().open();
+				});
 			buttonView.add(finishButton);
 		
 		mainView.add(buttonView);
