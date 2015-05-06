@@ -74,7 +74,7 @@ function database(){
 	};
 	
 	database.prototype.setStep = function(recipeId, stepNumber, details){
-		db.execute("INSERT INTO STEP (RECIPE_ID, STEP_NUMBER, DETAILS) VALUES (?, ?, ?)", recipeID, stepNumber, details); 
+		db.execute("INSERT INTO STEP (RECIPE_ID, STEP_NUMBER, DETAILS) VALUES (?, ?, ?)", recipeId, stepNumber, details); 
 	}
 		
 }
