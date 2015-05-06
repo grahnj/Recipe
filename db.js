@@ -72,6 +72,10 @@ function database(){
 	database.prototype.execute = function(executionString){
 		db.execute(executionString);
 	};
+	
+	database.prototype.setStep = function(recipeId, stepNumber, details){
+		db.execute("INSERT INTO STEP (RECIPE_ID, STEP_NUMBER, DETAILS) VALUES (?, ?, ?)", recipeID, stepNumber, details); 
+	}
 		
 }
 var database = new database();
