@@ -1,20 +1,8 @@
 function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
-	// var createIngredient = require('Create Ingredient');
 	var db = require("db");
 	var reci = require("Recipe");
 	var iCount = 0;
-	
-	if(editMode){
-		txtName.value = recipe.name;
-		for(var i = 0; i < recipe.ingredient.rows.length; i++){
-			add(iCount, recipe.ingredient.rows[i].cells[2], 
-				recipe.ingredient.rows[i].cells[3],
-				recipe.ingredient.rows[i].cells[4],
-				recipe.ingredient.rows[i].cells[5]);
-			iCount++;
-		}
-		refresh();
-	}
+	var id = 0;
 	
 	var self = Ti.UI.createWindow({
 		backgroundColor: '#9999AA',
@@ -231,33 +219,42 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 		backgroundColor: '#CFCFCF',
 		separatorColor: '#555588'
 	});
+	
+	if(!editMode){
+		//Get id
+		id = (recipe.id);
+		refresh();
+	}
+	
+	if(editMode){
+		//Find new recipe id
+		db.execute("INSERT INTO RECIPE (NAME, YIELD, IS_STANDARD) VALUES('MyRecipe', 0, 1);");
+			recipe = db.getRecipes();
+			id  = (recipe.rowCount);
+
+			refresh();
+	}
 
 	function refresh(){
 		table.setData([]); //Reset table
 		txtIngredient.value = "";
 		txtAmt.value = "";
-		console.log(reci.ingredients.length);
-		for(var i = 0; i < reci.ingredients.length; i++){//TODO change to reflect number of ingredients
-			// if(ingredients.isValidRow()){
-				// var amt = ingredients.fieldByName('AMOUNT');
-				// var maesure = ingredients.fieldByName('MEASUREMENT_TYPE');
-				// var name = ingredients.fieldByName('NAME'); 
-			// }
-			var ingredient = reci.ingredients[i];
-			var display = ingredient[1] + " " + ingredient[2] + " " + ingredient[0];
-			
-			console.log(display);
-			var row = Ti.UI.createTableViewRow({
-			 	title: display,
-				//title: amt + " " + measure + " " + name,
-				color: '#333355',
-			 });
-			 table.appendRow(row);
-		 }
-	}
-	
-	function add(id, name, amt, unit, val){
-		reci.addIngredient(id, name, amt, unit, val);
+		
+		var ingredients = db.getIngredients(id);
+		console.log("ingredients: " + ingredients);
+		for(var i = 0; i < ingredients.rowCount; i++){
+			if(ingredients.isValidRow){
+				var name = ingredients.fieldByName("NAME");
+				var amt = ingredients.fieldByName("AMOUNT");
+				var mType = ingredients.fieldByName("MEASURE_TYPE");
+				var row = Ti.UI.createTableViewRow({
+					title: amt + " " + mType + " " + name,
+					color: '#333355',
+				});
+				table.appendRow(row);
+				ingredients.next();
+			}
+		}
 	}
 	
 	//Buttons
@@ -268,9 +265,7 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 		height: Ti.UI.FILL
 	});
 	btnAdd.addEventListener('click', function(e){
-		//TODO add ingredient to table	
-		add(iCount, txtIngredient.value, txtAmt.value, pkrUnit.getSelectedRow(0).title, 1/*change*/);
-		iCount++;
+		db.addIngredient(id, txtIngredient.value, txtAmt.value, pkrUnit.getSelectedRow(0).title, 1);
 		refresh();
 	});
 	
