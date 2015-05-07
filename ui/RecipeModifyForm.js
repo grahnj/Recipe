@@ -1,6 +1,21 @@
-function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
-	var createIngredient = require('Create Ingredient');
-	 
+function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
+	// var createIngredient = require('Create Ingredient');
+	var db = require("db");
+	var reci = require("Recipe");
+	var iCount = 0;
+	
+	if(editMode){
+		txtName.value = recipe.name;
+		for(var i = 0; i < recipe.ingredient.rows.length; i++){
+			add(iCount, recipe.ingredient.rows[i].cells[2], 
+				recipe.ingredient.rows[i].cells[3],
+				recipe.ingredient.rows[i].cells[4],
+				recipe.ingredient.rows[i].cells[5]);
+			iCount++;
+		}
+		refresh();
+	}
+	
 	var self = Ti.UI.createWindow({
 		backgroundColor: '#9999AA',
 		//layout: 'vertical'
@@ -118,6 +133,7 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		height: Ti.UI.FILL,
 		backgroundColor: '#FFFFFF',
 		borderColor: '#9999AA',
+		color: '#000000',
 		keyboardType: Ti.UI.KEYBOARD_NUMBER_PAD,
 	});
 	
@@ -126,6 +142,7 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		width: '30%',
 		height: Ti.UI.FILL,
 		backgroundColor: '#FFFFFF',
+		color: '#000000',
 		//borderColor: '#9999AA'
 	});
 	
@@ -134,6 +151,7 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		width: '10%',
 		height: Ti.UI.FILL,
 		backgroundColor: '#FFFFFF',
+		color: '#000000',
 		keyboardType: Ti.UI.KEYBOARD_NUMBER_PAD,
 	});
 	
@@ -174,27 +192,27 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		pkrUnit.clear();
 		unitData = [];
 		if(measurement){ //Standard
-			unitData.push(Titanium.UI.createPickerRow({title: 'tsp'}));
-			unitData.push(Titanium.UI.createPickerRow({title: 'Tbs'}));
-			unitData.push(Titanium.UI.createPickerRow({title: 'Cup'}));
+			unitData.push(Titanium.UI.createPickerRow({title: 'tsp', value: 'tsp'}));
+			unitData.push(Titanium.UI.createPickerRow({title: 'Tbs', value: 'Tbs'}));
+			unitData.push(Titanium.UI.createPickerRow({title: 'Cup', value: 'Cup'}));
 			
 			if(!unit){ //Standard Volume
-				unitData.push(Titanium.UI.createPickerRow({title: 'Oz'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Pt'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Qt'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Gal'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Oz', value: 'Oz'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Pt', value: 'Pt'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Qt', value: 'Qt'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Gal', value: 'Gal'}));
 			} else { //Standard Weight
-				unitData.push(Titanium.UI.createPickerRow({title: 'Lbs'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Lbs', value: 'Lbs'}));
 			}
 		} else { //Metric
 			if(!unit){ //Metric Volume
-				unitData.push(Titanium.UI.createPickerRow({title: 'ML'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'L'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'KL'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'ML', value: 'ML'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'L', value: 'L'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'KL', value: 'KL'}));
 			} else { //Metric Weight
-				unitData.push(Titanium.UI.createPickerRow({title: 'MG'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'G'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'KG'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'MG', value: 'MG'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'G', value: 'G'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'KG', value: 'KG'}));
 			}
 		}
 		pkrUnit.add(unitData);
@@ -213,6 +231,34 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		backgroundColor: '#CFCFCF',
 		separatorColor: '#555588'
 	});
+
+	function refresh(){
+		table.setData([]); //Reset table
+		txtIngredient.value = "";
+		txtAmt.value = "";
+		console.log(reci.ingredients.length);
+		for(var i = 0; i < reci.ingredients.length; i++){//TODO change to reflect number of ingredients
+			// if(ingredients.isValidRow()){
+				// var amt = ingredients.fieldByName('AMOUNT');
+				// var maesure = ingredients.fieldByName('MEASUREMENT_TYPE');
+				// var name = ingredients.fieldByName('NAME'); 
+			// }
+			var ingredient = reci.ingredients[i];
+			var display = ingredient[1] + " " + ingredient[2] + " " + ingredient[0];
+			
+			console.log(display);
+			var row = Ti.UI.createTableViewRow({
+			 	title: display,
+				//title: amt + " " + measure + " " + name,
+				color: '#333355',
+			 });
+			 table.appendRow(row);
+		 }
+	}
+	
+	function add(id, name, amt, unit, val){
+		reci.addIngredient(id, name, amt, unit, val);
+	}
 	
 	//Buttons
 	var btnAdd = Ti.UI.createButton({
@@ -222,7 +268,10 @@ function RecipeModifyForm(/*Boolean*/editMode, /*Recipe Object*/recipe)	{
 		height: Ti.UI.FILL
 	});
 	btnAdd.addEventListener('click', function(e){
-		//TODO add ingredient to table
+		//TODO add ingredient to table	
+		add(iCount, txtIngredient.value, txtAmt.value, pkrUnit.getSelectedRow(0).title, 1/*change*/);
+		iCount++;
+		refresh();
 	});
 	
 	var btnSave = Ti.UI.createButton({
