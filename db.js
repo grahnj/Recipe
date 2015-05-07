@@ -55,8 +55,8 @@ function database(){
 			"WHERE RECIPE_ID = ?", recipeID);	
 	};
 	
-	database.prototype.addIngredient = function(recipeID, name, amount, MeasureType){
-		db.execute("INSERT INTO INGREDIENT (RECIPE_ID, NAME, AMOUNT, MEASUREMENT_TYPE) VALUES (?,?,?,?)", recipeID, name, amount, MeasureType);
+	database.prototype.addIngredient = function(recipeID, name, amount, MeasureType, MeasureValue){
+		db.execute("INSERT INTO INGREDIENT (RECIPE_ID, NAME, AMOUNT, MEASUREMENT_TYPE, MEASUREMENT_VALUE) VALUES (?,?,?,?,?)", recipeID, name, amount, MeasureType, MeasureValue);
 	};
 	
 	database.prototype.close = function(){
