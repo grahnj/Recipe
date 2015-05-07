@@ -1,7 +1,5 @@
 function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 	var db = require("db");
-	var reci = require("Recipe");
-	var iCount = 0;
 	var id = 0;
 	
 	var self = Ti.UI.createWindow({
