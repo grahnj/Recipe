@@ -53,6 +53,9 @@ function FoodEntities() {
 	            case measurementType.VOLUME:
 	                this.quantity *= this.unit / VolumeMetric.L * .95;
 	                this.unit = VolumeStandard.QT;
+	                //Switch this back down to the lowest unit value
+	                this.quantity *= this.unit;
+	                this.unit = VolumeStandard.TSP;
 	                break;
 	            case measurementType.WEIGHT:
 	                this.quantity *= this.unit / WeightMetric.G / 28;
@@ -78,6 +81,8 @@ function FoodEntities() {
 	                //Convert to quarts to throw it over to liters
 	                this.quantity *= this.unit / VolumeStandard.QT * 1.05263;
 	                this.unit = VolumeMetric.L;
+	                this.quantity *= this.unit;
+	                this.unit = VolumeMetric.ML;
 	                break;
 	            case measurementType.WEIGHT:
 	                this.quantity *= this.unit / VolumeStandard.OZ * 28;
