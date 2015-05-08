@@ -104,6 +104,6 @@
 		var CreateSteps = require('ui/CreateSteps');
 		//CreateSteps now takes four params
 		//readWrite -- same as editMode, Recipe, stepNum, details
-		//These will always be there parameters being passed
+		//These will always be the parameters being passed
 		new CreateSteps(editMode, localRecipe, 0, null).open();
 	});
