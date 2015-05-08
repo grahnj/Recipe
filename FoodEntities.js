@@ -1,6 +1,6 @@
 //This is the ingredient object/**
 function FoodEntities() {
-	var VolumeStandard = {
+	VolumeStandard = {
 	    TSP : 1,
 	    TBSP : 3,
 	    OZ : 6,
@@ -10,26 +10,26 @@ function FoodEntities() {
 	    GAL : 768
 	};
 	
-	var VolumeMetric = {
+	VolumeMetric = {
 	    ML : 1,
 	    L : 1000
 	};
 	
-	var WeightStandard = {
+	WeightStandard = {
 	    OZ : 1,
 	    LB : 16
 	};
 	
-	var WeightMetric = {
+	WeightMetric = {
 	    G : 1,
 	    KG : 1000
 	};
 	
-	var parcel = {
+	parcel = {
 	    EACH : 1
 	};
 	
-	var measurementType ={
+	measurementType ={
 	    WEIGHT : 1,
 	    VOLUME : 2,
 	    PARCEL : 3
@@ -106,52 +106,58 @@ function FoodEntities() {
 	        //i.e. Cup has an 8:1 ratio with OZ. If we have more than 8 OZ's, we need to convert to cups
 	        
 	        switch(this.measurementType){
-	            case measurementType.VOLUME:
+	            case 2:
 	                switch (this.unit) {
 	                case VolumeStandard.TSP:
 	                    //If the measurement is a tsp but is more than 3 tsps it is a tbsp
-	                    if (this.quantity > VolumeStandard.TBSP) {
+	                    if (this.quantity >= VolumeStandard.TBSP) {
 	                        this.quantity = this.quantity / VolumeStandard.TBSP;
 	                        this.unit = VolumeStandard.TBSP;
+	                        /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.TBSP:
 	                    ratio = VolumeStandard.OZ / VolumeStandard.TBSP;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = VolumeStandard.OZ;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.OZ:
 	                    ratio = VolumeStandard.CUP / VolumeStandard.OZ;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = VolumeStandard.CUP;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.CUP:
 	                    ratio = VolumeStandard.PT / VolumeStandard.CUP;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = VolumeStandard.PT;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.PT:
 	                    ratio = VolumeStandard.QT / VolumeStandard.PT;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = VolumeStandard.QT;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.QT:
 	                    ratio = VolumeStandard.GAL / VolumeStandard.QT;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = VolumeStandard.GAL;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case VolumeStandard.GAL:
-	                    return; //We don't need to upscale this any further
+	                    break; //We don't need to upscale this any further
 	                default:
 	                    break;
 	            }
@@ -160,9 +166,10 @@ function FoodEntities() {
 	                switch (this.unit){
 	                case WeightStandard.OZ:
 	                    ratio = WeightStandard.GAL / WeightStandard.OZ;
-	                    if (this.quantity > ratio) {
+	                    if (this.quantity >= ratio) {
 	                        this.quantity = this.quantity / ratio;
 	                        this.unit = WeightStandard.GAL;
+	                         /* FALLTHROUGH */
 	                    }
 	                    else return;
 	                case WeightStandard.LB:
@@ -183,8 +190,9 @@ function FoodEntities() {
 	        if (this.measurementType == measurementType.VOLUME){
 	            switch (this.unit){
 	                case VolumeMetric.ML:
-	                    if (this.quantity > 1000){
+	                    if (this.quantity >= 1000){
 	                        this.quantity /= 1000; this.unit = VolumeMetric.L;
+	                         /* FALLTHROUGH */
 	                    }
 	                    break;
 	                case VolumeMetric.L:
@@ -195,8 +203,9 @@ function FoodEntities() {
 	        } else if (this.measurementType == measurementType.WEIGHT) {
 	            switch (this.unit){
 	                case WeightMetric.G:
-	                    if (this.quantity > 1000){
+	                    if (this.quantity >= 1000){
 	                        this.quantity /= 1000; this.unit = WeightMetric.KG;
+	                         /* FALLTHROUGH */
 	                    }
 	                    break;
 	                case WeightMetric.KG:
@@ -225,10 +234,10 @@ function FoodEntities() {
 	    this.ingredients = [];
 	    this.name = name;
 	    this.perPerson = yieldAmt;
-	    this.isStandard;
+	    this.isStandard = isStandard;
 	
-	    this.addIngredient = function(name, Measurement){
-	        this.ingredients.push(new Ingredient(name, Measurement));
+	    this.addIngredient = function(ingredient){
+	        this.ingredients.push(ingredient);
 	    };
 	    
 	    this.homogonize = function(){
@@ -261,7 +270,7 @@ function FoodEntities() {
 	        //We need to convert the recipe and all of its information to Metric
 	
 	        for (var i = 0; i < Recipe.ingredients.length; i++){
-	            if (Recipe.ingredients[i].isStandard)
+	            if (Recipe.ingredients[i].measurement.isStandard)
 	                Recipe.ingredients[i].measurement.toMetric();
 	        }
 	    };
@@ -273,7 +282,7 @@ function FoodEntities() {
 	        Recipe.measurement.toStandard();
 	
 	        for (var i = 0; i < Recipe.ingredients.length; i++){
-	            if (!Recipe.ingredients[i].isStandard)
+	            if (!Recipe.ingredients[i].measurement.isStandard)
 	                Recipe.ingredients[i].measurement.toStandard();
 	        }
 	    };
