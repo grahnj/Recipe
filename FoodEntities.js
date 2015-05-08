@@ -111,7 +111,11 @@ function FoodEntities() {
 	        //i.e. Cup has an 8:1 ratio with OZ. If we have more than 8 OZ's, we need to convert to cups
 	        
 	        switch(this.measurementType){
-	            case 2:
+	            case measurementType.VOLUME:
+	            	//Convert all ingredients coming in to TSP for filtering of user misunderstandings
+	        	this.quantity *= this.unit;
+	                this.unit = VolumeStandard.TSP;
+	                
 	                switch (this.unit) {
 	                case VolumeStandard.TSP:
 	                    //If the measurement is a tsp but is more than 3 tsps it is a tbsp
@@ -168,6 +172,10 @@ function FoodEntities() {
 	            }
 	                break;
 	            case measurementType.WEIGHT:
+	            	//Convert everything to the lowest unit
+	            	this.quantity *= this.unit;
+	                this.unit = WeightStandard.OZ;
+	            	
 	                switch (this.unit){
 	                case WeightStandard.OZ:
 	                    ratio = WeightStandard.GAL / WeightStandard.OZ;
@@ -193,6 +201,9 @@ function FoodEntities() {
 	    this.filterIngredientMetric = function(){
 	        //Metric is much more straight forward for filtering
 	        if (this.measurementType == measurementType.VOLUME){
+	        	
+        		this.quantity *= this.unit;
+	                this.unit = VolumeMetric.ML;
 	            switch (this.unit){
 	                case VolumeMetric.ML:
 	                    if (this.quantity >= 1000){
@@ -206,6 +217,8 @@ function FoodEntities() {
 	                    break;
 	            }
 	        } else if (this.measurementType == measurementType.WEIGHT) {
+	        	this.quantity *= this.unit;
+	                this.unit = WeightMetric.G;
 	            switch (this.unit){
 	                case WeightMetric.G:
 	                    if (this.quantity >= 1000){
