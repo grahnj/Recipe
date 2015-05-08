@@ -53,9 +53,6 @@ function FoodEntities() {
 	            case measurementType.VOLUME:
 	                this.quantity *= this.unit / VolumeMetric.L * .95;
 	                this.unit = VolumeStandard.QT;
-	                //Switch this back down to the lowest unit value
-	                this.quantity *= this.unit;
-	                this.unit = VolumeStandard.TSP;
 	                break;
 	            case measurementType.WEIGHT:
 	                this.quantity *= this.unit / WeightMetric.G / 28;
@@ -81,8 +78,6 @@ function FoodEntities() {
 	                //Convert to quarts to throw it over to liters
 	                this.quantity *= this.unit / VolumeStandard.QT * 1.05263;
 	                this.unit = VolumeMetric.L;
-	                this.quantity *= this.unit;
-	                this.unit = VolumeMetric.ML;
 	                break;
 	            case measurementType.WEIGHT:
 	                this.quantity *= this.unit / VolumeStandard.OZ * 28;
@@ -111,11 +106,7 @@ function FoodEntities() {
 	        //i.e. Cup has an 8:1 ratio with OZ. If we have more than 8 OZ's, we need to convert to cups
 	        
 	        switch(this.measurementType){
-	            case measurementType.VOLUME:
-	            	//Convert all ingredients coming in to TSP for filtering of user misunderstandings
-	        	this.quantity *= this.unit;
-	                this.unit = VolumeStandard.TSP;
-	                
+	            case 2:
 	                switch (this.unit) {
 	                case VolumeStandard.TSP:
 	                    //If the measurement is a tsp but is more than 3 tsps it is a tbsp
@@ -172,10 +163,6 @@ function FoodEntities() {
 	            }
 	                break;
 	            case measurementType.WEIGHT:
-	            	//Convert everything to the lowest unit
-	            	this.quantity *= this.unit;
-	                this.unit = WeightStandard.OZ;
-	            	
 	                switch (this.unit){
 	                case WeightStandard.OZ:
 	                    ratio = WeightStandard.GAL / WeightStandard.OZ;
@@ -201,9 +188,6 @@ function FoodEntities() {
 	    this.filterIngredientMetric = function(){
 	        //Metric is much more straight forward for filtering
 	        if (this.measurementType == measurementType.VOLUME){
-	        	
-        		this.quantity *= this.unit;
-	                this.unit = VolumeMetric.ML;
 	            switch (this.unit){
 	                case VolumeMetric.ML:
 	                    if (this.quantity >= 1000){
@@ -217,8 +201,6 @@ function FoodEntities() {
 	                    break;
 	            }
 	        } else if (this.measurementType == measurementType.WEIGHT) {
-	        	this.quantity *= this.unit;
-	                this.unit = WeightMetric.G;
 	            switch (this.unit){
 	                case WeightMetric.G:
 	                    if (this.quantity >= 1000){
