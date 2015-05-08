@@ -15,6 +15,9 @@ function database(){
 	}
 	db.execute("INSERT INTO RECIPE (NAME, YIELD, IS_STANDARD) VALUES ('Apple Pie', 4, 1)");
 	
+	var test = db.execute("SELECT * FROM RECIPE");
+	console.log(test);
+	
 	database.prototype.getRecipes = function(){
 		return db.execute("SELECT * FROM RECIPE");	
 	};
@@ -22,8 +25,8 @@ function database(){
 	database.prototype.getIngredients = function(recipeID){
 		return db.execute("" +
 			"SELECT " +
-
-			"INGREDIENT_ID, " +
+			
+			"rowid, " +
 			"NAME, " +
 			"AMOUNT, " +
 			"MEASUREMENT_TYPE " +
@@ -35,34 +38,25 @@ function database(){
 	database.prototype.getFilters = function(recipeID){
 		return db.execute("SELECT " +
 
-			"FILTER_ID, " +
+			"rowid, " +
 			"FILTER_NAME " +
 			
 			"FROM FILTER " +
-			
-			"INNER JOIN RECIPE_FILTER " +
-			"ON RECIPE_FILTER.FILTER_ID=FILTER.FILTER_ID " +
 			
 			"WHERE RECIPE_FILTER.RECIPE_ID = ?", recipeID);
 	};
 	
 	database.prototype.getSteps = function(recipeID){
 		return db.execute("SELECT " +
-
-			"ID, " +
-			"STEP_NUMBER " +
 			"DETAILS " +
 			
 			"FROM STEP " +
 			
-			"INNER JOIN RECIPE_STEP " +
-			"ON RECIPE_STEP.STEP_ID=STEP.ID " +
-			
-			"WHERE RECIPE_STEP.RECIPE_ID = ?", recipeID);	
+			"WHERE RECIPE_ID = ?", recipeID);	
 	};
 	
-	database.prototype.addIngredient = function(recipeID, name, amount, MeasureType, MeasurementValue){
-		db.execute("INSERT INTO INGREDIENT (RECIPE_ID, NAME, AMOUNT, MEASUREMENT_TYPE, MEASUREMENT_VALUE) VALUES (?,?,?,?, ?)", recipeID, name, amount, MeasureType, MeasurementValue);
+	database.prototype.addIngredient = function(recipeID, name, amount, MeasureType, MeasureValue){
+		db.execute("INSERT INTO INGREDIENT (RECIPE_ID, NAME, AMOUNT, MEASUREMENT_TYPE, MEASUREMENT_VALUE) VALUES (?,?,?,?,?)", recipeID, name, amount, MeasureType, MeasureValue);
 	};
 	
 	database.prototype.close = function(){
@@ -72,6 +66,10 @@ function database(){
 	database.prototype.execute = function(executionString){
 		db.execute(executionString);
 	};
+	
+	database.prototype.setStep = function(recipeId, stepNumber, details){
+		db.execute("INSERT INTO STEP (RECIPE_ID, STEP_NUMBER, DETAILS) VALUES (?, ?, ?)", recipeId, stepNumber, details); 
+	}
 	
 	database.prototype.getNewRecipeID = function(){
 		var rows = db.execute("SELECT * FROM RECIPE");
