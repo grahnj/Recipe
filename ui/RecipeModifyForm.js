@@ -1,6 +1,8 @@
-function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
+function RecipeModifyForm(/*Boolean*/editMode, localRecipe)	{
 	var db = require("db");
-	var id = 0;
+	var entities = require("FoodEntities");
+	// var id = 0;
+	 var mType = 1;
 	
 	var self = Ti.UI.createWindow({
 		backgroundColor: '#9999AA',
@@ -111,6 +113,11 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 	});
 	measurementSwitch.addEventListener('change',function(e){
 		setUnit(measurementSwitch.value, unitSwitch.value);
+		if(e.value){
+			e.value = false;
+		} else {
+			e.value = true;
+		}
 	});
 	
 	var txtServSize = Ti.UI.createTextField({
@@ -151,6 +158,14 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 	});
 	unitSwitch.addEventListener('change', function(e){
 		setUnit(measurementSwitch.value, unitSwitch.value);
+		if(e.value){
+			e.value = false;
+			mType = 2;
+		} else {
+			e.value = true;
+			mType = 1;
+		}
+		console.log("mType: " + mType);
 	});
 	
 	var pkrUnit = Ti.UI.createPicker({
@@ -159,7 +174,6 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 		height: '70dp',
 		backgroundColor: "#555588"
 	});
-	
 	pkrUnit.clear = function(){
 	    if(pkrUnit.columns[0]) {
 	        var col = pkrUnit.columns[0];
@@ -169,39 +183,6 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 	                    col.removeRow(row);
 	            }
 	    }
-	};
-	
-	var unitData = [];
-	setUnit(measurementSwitch.value, unitSwitch.value);
-	
-	function setUnit(measurement, unit){
-		pkrUnit.clear();
-		unitData = [];
-		if(measurement){ //Standard
-			unitData.push(Titanium.UI.createPickerRow({title: 'tsp', value: 'tsp'}));
-			unitData.push(Titanium.UI.createPickerRow({title: 'Tbs', value: 'Tbs'}));
-			unitData.push(Titanium.UI.createPickerRow({title: 'Cup', value: 'Cup'}));
-			
-			if(!unit){ //Standard Volume
-				unitData.push(Titanium.UI.createPickerRow({title: 'Oz', value: 'Oz'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Pt', value: 'Pt'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Qt', value: 'Qt'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'Gal', value: 'Gal'}));
-			} else { //Standard Weight
-				unitData.push(Titanium.UI.createPickerRow({title: 'Lbs', value: 'Lbs'}));
-			}
-		} else { //Metric
-			if(!unit){ //Metric Volume
-				unitData.push(Titanium.UI.createPickerRow({title: 'ML', value: 'ML'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'L', value: 'L'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'KL', value: 'KL'}));
-			} else { //Metric Weight
-				unitData.push(Titanium.UI.createPickerRow({title: 'MG', value: 'MG'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'G', value: 'G'}));
-				unitData.push(Titanium.UI.createPickerRow({title: 'KG', value: 'KG'}));
-			}
-		}
-		pkrUnit.add(unitData);
 	};
 	
 	function metricUnits(){
@@ -218,53 +199,12 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 		separatorColor: '#555588'
 	});
 	
-	if(!editMode){
-		//Get id
-		id = (recipe.id);
-		refresh();
-	}
-	
-	if(editMode){
-		//Find new recipe id
-		db.execute("INSERT INTO RECIPE (NAME, YIELD, IS_STANDARD) VALUES('MyRecipe', 0, 1);");
-			recipe = db.getRecipes();
-			id  = (recipe.rowCount);
-
-			refresh();
-	}
-
-	function refresh(){
-		table.setData([]); //Reset table
-		txtIngredient.value = "";
-		txtAmt.value = "";
-		
-		var ingredients = db.getIngredients(id);
-		console.log("ingredients: " + ingredients);
-		for(var i = 0; i < ingredients.rowCount; i++){
-			if(ingredients.isValidRow){
-				var name = ingredients.fieldByName("NAME");
-				var amt = ingredients.fieldByName("AMOUNT");
-				var mType = ingredients.fieldByName("MEASURE_TYPE");
-				var row = Ti.UI.createTableViewRow({
-					title: amt + " " + mType + " " + name,
-					color: '#333355',
-				});
-				table.appendRow(row);
-				ingredients.next();
-			}
-		}
-	}
-	
 	//Buttons
 	var btnAdd = Ti.UI.createButton({
 		title: 'ADD',
 		right: 5,
 		image: '/images/add_button.png',
 		height: Ti.UI.FILL
-	});
-	btnAdd.addEventListener('click', function(e){
-		db.addIngredient(id, txtIngredient.value, txtAmt.value, pkrUnit.getSelectedRow(0).title, 1);
-		refresh();
 	});
 	
 	var btnSave = Ti.UI.createButton({
@@ -273,10 +213,188 @@ function RecipeModifyForm(/*Boolean*/editMode, recipe)	{
 		height: Ti.UI.FILL,
 	});
 	
+	//TODO Teleport
+	if(editMode){
+		localRecipe = new entities.Recipe(db.getNewRecipeID(), "New Recipe", 1, true);
+		txtName.value = localRecipe.name;
+		txtServSize.value = localRecipe.yieldAmt;
+
+	} else {
+		buildFromDB(localRecipe.id-1);
+	}
+	
+	var unitData = [];
+	setUnit(measurementSwitch.value, unitSwitch.value);
+	
+	function setUnit(measurement, unit){
+		pkrUnit.clear();
+		unitData = [];
+		if(measurement){ //Standard
+			if(!unit){ //Standard Volume
+				console.log("Standard Volume - T/F");
+				unitData.push(Titanium.UI.createPickerRow({title: 'tsp', id: '1'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Tbs', id: '3'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Oz', id: '6'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Cup', id: '48'}));			
+				unitData.push(Titanium.UI.createPickerRow({title: 'Pt', id: '96'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Qt', id: '192'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Gal', id: '768'}));
+			} else { //Standard Weight
+				console.log("Standard Weight - T/T");
+				unitData.push(Titanium.UI.createPickerRow({title: 'Oz', id: '1'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'Lbs', id: '16'}));
+			}
+		} else { //Metric
+			if(!unit){ //Metric Volume
+				console.log("Metric Volume - F/F");
+				unitData.push(Titanium.UI.createPickerRow({title: 'ML', id: '1'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'L', id: '1000'}));
+				//unitData.push(Titanium.UI.createPickerRow({title: 'KL', id: 'KL'}));
+			} else { //Metric Weight
+				console.log("Metric Weight - F/T");
+				unitData.push(Titanium.UI.createPickerRow({title: 'G', id: '1'}));
+				unitData.push(Titanium.UI.createPickerRow({title: 'KG', id: '1000'}));
+			}
+		}
+		pkrUnit.add(unitData);
+	};
+	
+	function getUnit(isStandard, unit, unitId){
+		console.log("unit: " + unit);
+		if(unit > 1){
+			unit = false;
+		} else
+			unit = true;
+
+		console.log("isStandard: " + isStandard + " - " + "unit: " + unit);
+		setUnit(isStandard, unit); //(isStandard, Vol/Weight)
+		//var size = pkrUnit.columns[0].rowCount;
+		var col = pkrUnit.columns[0];
+	        var len = col.rowCount;
+	            for(var x = len-1; x >= 0; x-- ){
+	                    var row = col.rows[x];
+	                    if(row.id == unitId)
+							return row.title;
+	            }
+		// console.log("size: " + size);
+		// for(var i = 0; i < size; i++){
+			// pkrUnit.setSelectedRow(1,i,false);
+			// console.log(pkrUnit.getSelectedRow(0).title);
+			// if(pkrUnit.getSelectedRow.id == unitId){
+				// return pkrUnit.getSelectedRow(0).title;
+			// }
+// 				
+		// }
+		//pkrUnit.setSelectedRow(0,unitId,false);
+		return "ERROR";
+	}
+	
+	function buildFromDB(id){
+		table.setData([]); //Reset table
+		txtIngredient.value = "";
+		txtAmt.value = "";
+		
+		var ingredients = db.getIngredients(id);		
+		
+		for(var i = 0; i < ingredients.rowCount; i++){
+			if(ingredients.isValidRow){
+				var name = ingredients.fieldByName("NAME");
+				var amt = ingredients.fieldByName("AMOUNT");
+				var mType = ingredients.fieldByName("MEASUREMENT_TYPE");
+				var mVal = ingredients.fieldByName("MEASUREMENT_VALUE");
+
+				var ingred = new entities.Ingredient(name, new entities.Measurement(amt, mVal, mType, measurementSwitch.value));
+
+				var row = Ti.UI.createTableViewRow({
+					title: amt + " " + getUnit(ingred.measurement.isStandard, ingred.measurement.measurementType, ingred.measurement.unit) + " " + name,
+					color: '#333355',
+					//data: ingred
+				});
+				table.appendRow(row);
+				ingredients.next();
+			}
+		}
+	}
+	
+	function buildFromObject(){
+		table.setData([]); //Reset table
+		if(txtServSize.getValue() != 0 && !editMode)
+			localRecipe.scale(txtServSize.getValue());
+			
+		for(var i = 0; i < localRecipe.ingredients.length; i++){
+			var ingred = localRecipe.ingredients[i];
+			var amt = ingred.measurement.quantity;
+			var mVal = ingred.measurement.measurementType;
+			var name = ingred.name;
+			
+			var row = Ti.UI.createTableViewRow({
+				title: amt + " " + getUnit(ingred.measurement.isStandard, ingred.measurement.measurementType, ingred.measurement.unit) + " " + name,
+				color: '#333355',
+				//data: ingred
+			});
+			
+			table.appendRow(row);
+		}
+	}
+	
+	txtServSize.addEventListener("change", function(e){
+		if(!isNaN(e.value)){
+			localRecipe.scale(txtServSize.value);
+			buildFromObject();
+		}
+			
+	});
+	
+	btnAdd.addEventListener('click', function(e){
+		var name = txtIngredient.value;
+		var mVal = pkrUnit.getSelectedRow(0).id;
+
+		var isStandard = measurementSwitch.value;
+		var amt = txtAmt.value;
+		
+		var measure = new entities.Measurement(amt, mVal, mType, isStandard);
+		var ingred = new entities.Ingredient(txtIngredient.value, measure);
+		localRecipe.addIngredient(ingred);
+
+		// for (var i = 0; i < localRecipe.ingredients.length; i++){
+			 // console.log(localRecipe.ingredients[i].name);
+			 // console.log(localRecipe.ingredients[i].measurement);
+		 // }
+		buildFromObject();
+		
+		// var recipe = new entities.Recipe(1, "some recipe", 4, true);
+// 		
+		// console.log(recipe);
+// 		
+		// var measure = new entities.Measurement(4, 3, 2, recipe.isStandard);
+		// var ingredient = new entities.Ingredient("Some ingredient", measure);
+		// recipe.addIngredient(ingredient);
+// 		
+		// recipe.scale(20);
+		// //Expecting to see 1.25 cups (48) -- NOTE: Indeed this is what my console is logging
+// 		
+		// for (var i = 0; i < recipe.ingredients.length; i++){
+			// console.log(recipe.ingredients[i].name);
+			// console.log(recipe.ingredients[i].measurement);
+		// }
+	});
+	
 	btnSave.addEventListener('click', function(e){
+		if(editMode){
+			localRecipe.name = txtName.getValue();
+			localRecipe.amount = txtAmt.getValue();
+			
+			db.addRecipe(localRecipe.name, localRecipe.perPerson, localRecipe.isStandard ? 1: 0);
+
+			for(var i = 0; i < localRecipe.ingredients.length; i++){
+				var current = localRecipe.ingredients[i];
+				db.addIngredient(localRecipe.id, current.name, current.measurement.quantity, current.measurement.measurementType, current.measurement.isStandard);
+			}
+		}
+		
 		var CreateSteps = require('ui/CreateSteps');
 		
-		new CreateSteps().open();
+		new CreateSteps(editMode, localRecipe, 0, null).open();
 	});
 	
 	//Build
