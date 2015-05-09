@@ -268,7 +268,8 @@ function RecipeModifyForm(/*Boolean*/editMode, localRecipe)	{
 
 		console.log("isStandard: " + isStandard + " - " + "unit: " + unit);
 		setUnit(isStandard, unit); //(isStandard, Vol/Weight)
-		//var size = pkrUnit.columns[0].rowCount;
+		
+		//Returns unit Name
 		var col = pkrUnit.columns[0];
 	        var len = col.rowCount;
 	            for(var x = len-1; x >= 0; x-- ){
@@ -276,16 +277,6 @@ function RecipeModifyForm(/*Boolean*/editMode, localRecipe)	{
 	                    if(row.id == unitId)
 							return row.title;
 	            }
-		// console.log("size: " + size);
-		// for(var i = 0; i < size; i++){
-			// pkrUnit.setSelectedRow(1,i,false);
-			// console.log(pkrUnit.getSelectedRow(0).title);
-			// if(pkrUnit.getSelectedRow.id == unitId){
-				// return pkrUnit.getSelectedRow(0).title;
-			// }
-// 				
-		// }
-		//pkrUnit.setSelectedRow(0,unitId,false);
 		return "ERROR";
 	}
 	
@@ -338,11 +329,10 @@ function RecipeModifyForm(/*Boolean*/editMode, localRecipe)	{
 	}
 	
 	txtServSize.addEventListener("change", function(e){
-		if(!isNaN(e.value)){
+		if(!isNaN(e.value)){ //Scale Ingredients when serving size is changed
 			localRecipe.scale(txtServSize.value);
 			buildFromObject();
-		}
-			
+		}			
 	});
 	
 	btnAdd.addEventListener('click', function(e){
@@ -356,12 +346,9 @@ function RecipeModifyForm(/*Boolean*/editMode, localRecipe)	{
 		var ingred = new entities.Ingredient(txtIngredient.value, measure);
 		localRecipe.addIngredient(ingred);
 
-		// for (var i = 0; i < localRecipe.ingredients.length; i++){
-			 // console.log(localRecipe.ingredients[i].name);
-			 // console.log(localRecipe.ingredients[i].measurement);
-		 // }
 		buildFromObject();
 		
+		/* Scaling Verify Test */
 		// var recipe = new entities.Recipe(1, "some recipe", 4, true);
 // 		
 		// console.log(recipe);
